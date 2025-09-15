@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Audio Flashcards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn.active {
+            background: rgba(255,255,255,0.4);
+            border-color: rgba(255,255,255,0.6);
+        }
+
+        .quiz-btn {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            color: #333;
+            font-weight: bold;
+        }
+
+        .quiz-btn:hover {
+            background: linear-gradient(45deg, #fecfef, #ff9a9e);
+        }
+
+        .voice-btn {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.4);
+        }
+
+        .voice-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .voice-btn.active {
+            background: rgba(255,255,255,0.35);
+            border-color: rgba(255,255,255,0.7);
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .card {
+            width: 100%;
+            height: 320px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+            cursor: pointer;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background: rgba(255,255,255,0.98);
+        }
+
+        .card-image {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .word-english {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .word-translation {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 500;
+            font-style: italic;
+        }
+
+        .word-type {
+            font-size: 0.9rem;
+            color: #718096;
+            background: rgba(113, 128, 150, 0.1);
+            padding: 5px 12px;
+            border-radius: 15px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .audio-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .audio-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .audio-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Quiz Mode Styles */
+        .quiz-face {
+            background: rgba(255,255,255,0.98);
+            padding: 15px;
+        }
+
+        .quiz-input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            text-align: center;
+            outline: none;
+        }
+
+        .quiz-input:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .quiz-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .check-btn {
+            flex: 1;
+            background: linear-gradient(45deg, #48bb78, #68d391);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .wrong-btn {
+            flex: 1;
+            background: linear-gradient(45deg, #f56565, #fc8181);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .quiz-result {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .correct {
+            background: #c6f6d5;
+            color: #2f855a;
+        }
+
+        .incorrect {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        /* Category specific styles */
+        .card.health .card-face {
+            border-left: 5px solid #48bb78;
+        }
+
+        .card.qualities .card-face {
+            border-left: 5px solid #ed8936;
+        }
+
+        .card.sports .card-face {
+            border-left: 5px solid #4299e1;
+        }
+
+        .card.leadership .card-face {
+            border-left: 5px solid #9f7aea;
+        }
+
+        .card.hidden {
+            display: none;
+        }
+
+        .play-all-btn {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .play-all-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .stop-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+        }
+
+        .stop-btn:hover {
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .word-letters {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+            text-align: center;
+            letter-spacing: 8px;
+            font-family: 'Courier New', monospace;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .word-divider {
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #667eea, transparent);
+            margin: 10px auto;
+        }
+
+        .stats {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .lesson-indicator {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255,255,255,0.8);
+            color: #666;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .card-number {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.1);
+            color: #666;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1000;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            background: linear-gradient(45deg, #764ba2, #667eea);
+        }
+
+        @media (max-width: 768px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .card {
+                height: 280px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .word-english {
+                font-size: 1.8rem;
+            }
+            
+            .word-translation {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; color: rgba(255,255,255,0.8); font-size: 0.8rem; margin-bottom: 10px; line-height: 1.3;">
+        وزارة التعليم (٢٨٠)<br>
+        الإدارة العامة للتعليم بمنطقة مكة المكرمة<br>
+        الشؤون التعليمية<br>
+        إدارة أداء التعليم / قسم الإدارة<br>
+        ابتدائية ومتوسطة التحفيظ ومتوسطة
+    </div>
+    
+    <div class="header">
+        <h1>🎓 English Audio Flashcards - Grade 3 Intermediate</h1>
+        <p>Interactive flashcards to learn English with audio pronunciation</p>
+        <p style="font-size: 1rem; margin-top: 10px; color: rgba(255,255,255,0.9);">Teacher: Aza Almajdy</p>
+    </div>
+
+    <div class="stats" id="stats">
+        Total Words: 27 | Currently Showing: 27
+    </div>
+
+    <div class="controls">
+        <button class="btn active" onclick="filterCards('all')">All Words</button>
+        <button class="btn" onclick="filterCards('health')">Health & Lifestyle</button>
+        <button class="btn" onclick="filterCards('qualities')">Personal Qualities</button>
+        <button class="btn" onclick="filterCards('sports')">Sports & Competition</button>
+        <button class="btn" onclick="filterCards('leadership')">Leadership & Government</button>
+        <button class="btn quiz-btn" onclick="toggleQuizMode()">📝 Quiz Mode</button>
+        <button class="btn" onclick="flipAllCards()">🔄 Flip All</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn voice-btn active" onclick="setVoice('american')" id="americanBtn">🇺🇸 American</button>
+        <button class="btn voice-btn" onclick="setVoice('british')" id="britishBtn">🇬🇧 British</button>
+    </div>
+
+    <button class="play-all-btn" id="playAllBtn" onclick="togglePlayAll()">
+        🎵 Play All Words
+    </button>
+
+    <div class="cards-container" id="cardsContainer">
+        <!-- Cards will be added here by JavaScript -->
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTopBtn" onclick="scrollToTop()">
+        ⬆️
+    </button>
+
+    <script>
+        const flashcards = [
+            // Health & Lifestyle
+            { english: "fitness", translation: "لياقة بدنية", type: "noun", category: "health", emoji: "💪", lesson: "Health" },
+            { english: "fanatic", translation: "متعصب / مهووس", type: "noun", category: "health", emoji: "🔥", lesson: "Health" },
+            { english: "herbal tea", translation: "شاي عشبي", type: "noun", category: "health", emoji: "🫖", lesson: "Health" },
+            { english: "physical exercise", translation: "تمرين بدني", type: "noun", category: "health", emoji: "🏃‍♀️", lesson: "Health" },
+            { english: "solving puzzle", translation: "حل الألغاز", type: "verb", category: "health", emoji: "🧩", lesson: "Health" },
+            { english: "addict", translation: "مدمن", type: "noun", category: "health", emoji: "⚠️", lesson: "Health" },
+            
+            // Personal Qualities & Actions
+            { english: "devoted", translation: "مخلص / مكرس", type: "adjective", category: "qualities", emoji: "❤️", lesson: "Qualities" },
+            { english: "donate", translation: "يتبرع", type: "verb", category: "qualities", emoji: "🤝", lesson: "Qualities" },
+            { english: "Blood Donor Clinic", translation: "عيادة المتبرعين بالدم", type: "noun", category: "qualities", emoji: "🩸", lesson: "Qualities" },
+            
+            // Sports & Competition
+            { english: "Athlete", translation: "رياضي", type: "noun", category: "sports", emoji: "🏆", lesson: "Sports" },
+            { english: "award", translation: "جائزة", type: "noun", category: "sports", emoji: "🥇", lesson: "Sports" },
+            { english: "crippling", translation: "مُعيق / شديد", type: "adjective", category: "sports", emoji: "⚡", lesson: "Sports" },
+            { english: "twin", translation: "توأم", type: "noun", category: "sports", emoji: "👯", lesson: "Sports" },
+            { english: "falcons", translation: "صقور", type: "noun", category: "sports", emoji: "🦅", lesson: "Sports" },
+            { english: "Junior League", translation: "الدوري الصغار", type: "noun", category: "sports", emoji: "⚽", lesson: "Sports" },
+            { english: "coach", translation: "مدرب", type: "noun", category: "sports", emoji: "👨‍🏫", lesson: "Sports" },
+            { english: "bulletin board", translation: "لوحة الإعلانات", type: "noun", category: "sports", emoji: "📋", lesson: "Sports" },
+            { english: "forward", translation: "مهاجم", type: "noun", category: "sports", emoji: "⚡", lesson: "Sports" },
+            { english: "Division", translation: "قسم / فرقة", type: "noun", category: "sports", emoji: "📊", lesson: "Sports" },
+            
+            // Leadership & Government
+            { english: "the Two Holy Mosques", translation: "الحرمين الشريفين", type: "noun", category: "leadership", emoji: "🕌", lesson: "Leadership" },
+            { english: "Crown Prince", translation: "ولي العهد", type: "noun", category: "leadership", emoji: "👑", lesson: "Leadership" },
+            { english: "predecessor", translation: "السلف / السابق", type: "noun", category: "leadership", emoji: "📜", lesson: "Leadership" },
+            { english: "Governor", translation: "محافظ / أمير", type: "noun", category: "leadership", emoji: "🏛️", lesson: "Leadership" },
+            { english: "Red Crescent", translation: "الهلال الأحمر", type: "noun", category: "leadership", emoji: "🌙", lesson: "Leadership" },
+            { english: "metropolis", translation: "مدينة كبرى", type: "noun", category: "leadership", emoji: "🏙️", lesson: "Leadership" },
+            { english: "humanitarian", translation: "إنساني", type: "adjective", category: "leadership", emoji: "🤲", lesson: "Leadership" }
+        ];
+
+        let currentFilter = 'all';
+        let isPlayingAll = false;
+        let isQuizMode = false;
+        let currentVoice = 'american'; // Default to American
+
+        function createCards() {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+            
+            flashcards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = `card ${card.category}`;
+                cardElement.id = `card-${index}`;
+                cardElement.setAttribute('data-category', card.category);
+                
+                const isMultipleWords = card.english.includes(' ');
+                const letterDisplay = isMultipleWords ? '' : `
+                    <div class="word-divider"></div>
+                    <div class="word-letters">${card.english.toUpperCase().split('').join(' ')}</div>
+                `;
+                const letterDisplayBack = isMultipleWords ? '' : `
+                    <div class="word-divider"></div>
+                    <div class="word-letters" style="font-size: 1.4rem;">${card.english.toUpperCase().split('').join(' ')}</div>
+                `;
+
+                const normalFront = `
+                    <div class="card-face card-front">
+                        <div class="lesson-indicator">${card.lesson}</div>
+                        <div class="card-number">${index + 1}</div>
+                        <div class="card-image">${card.emoji}</div>
+                        <div class="word-type">${card.type}</div>
+                        <div class="word-english">${card.english}</div>
+                        ${letterDisplay}
+                        <button class="audio-btn" onclick="playAudio(event, '${card.english}')">
+                            🔊 Listen
+                        </button>
+                    </div>
+                `;
+
+                const normalBack = `
+                    <div class="card-face card-back">
+                        <div class="lesson-indicator">${card.lesson}</div>
+                        <div class="card-image">${card.emoji}</div>
+                        <div class="word-english" style="font-size: 1.8rem;">${card.english}</div>
+                        ${letterDisplayBack}
+                        <div class="word-translation">${card.translation}</div>
+                        <button class="audio-btn" onclick="playAudio(event, '${card.english}')">
+                            🔊 Listen Again
+                        </button>
+                    </div>
+                `;
+
+                cardElement.innerHTML = normalFront + normalBack;
+                
+                if (!isQuizMode) {
+                    cardElement.addEventListener('click', function(e) {
+                        if (!e.target.classList.contains('audio-btn')) {
+                            this.classList.toggle('flipped');
+                        }
+                    });
+                }
+                
+                container.appendChild(cardElement);
+            });
+        }
+
+        function toggleQuizMode() {
+            isQuizMode = !isQuizMode;
+            const quizBtn = document.querySelector('.quiz-btn');
+            
+            if (isQuizMode) {
+                quizBtn.textContent = '📚 Study Mode';
+                quizBtn.classList.add('active');
+                createQuizCards();
+            } else {
+                quizBtn.textContent = '📝 Quiz Mode';
+                quizBtn.classList.remove('active');
+                createCards();
+            }
+        }
+
+        function createQuizCards() {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+            
+            flashcards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = `card ${card.category}`;
+                cardElement.id = `card-${index}`;
+                cardElement.setAttribute('data-category', card.category);
+                
+                cardElement.innerHTML = `
+                    <div class="card-face quiz-face">
+                        <div class="lesson-indicator">${card.lesson}</div>
+                        <div class="card-number">${index + 1}</div>
+                        <div class="card-image">${card.emoji}</div>
+                        <button class="audio-btn" onclick="playAudio(event, '${card.english}')" style="margin-bottom: 15px;">
+                            🔊 Listen
+                        </button>
+                        <input type="text" class="quiz-input" placeholder="Type the English word..." data-answer="${card.english.toLowerCase()}" data-index="${index}">
+                        <div class="quiz-buttons">
+                            <button class="check-btn" onclick="checkAnswer(${index})">✓ Check</button>
+                            <button class="wrong-btn" onclick="showAnswer(${index})">❌ Show Answer</button>
+                        </div>
+                        <div class="quiz-result" id="result-${index}"></div>
+                    </div>
+                `;
+                
+                container.appendChild(cardElement);
+            });
+        }
+
+        function setVoice(voice) {
+            currentVoice = voice;
+            
+            // Update button states
+            document.querySelectorAll('.voice-btn').forEach(btn => btn.classList.remove('active'));
+            
+            if (voice === 'american') {
+                document.getElementById('americanBtn').classList.add('active');
+            } else {
+                document.getElementById('britishBtn').classList.add('active');
+            }
+        }
+
+        function checkAnswer(index) {
+            const input = document.querySelector(`input[data-index="${index}"]`);
+            const result = document.getElementById(`result-${index}`);
+            const userAnswer = input.value.toLowerCase().trim();
+            const correctAnswer = input.dataset.answer;
+            
+            if (userAnswer === correctAnswer) {
+                result.textContent = '✅ Correct! Well done!';
+                result.className = 'quiz-result correct';
+                input.style.borderColor = '#48bb78';
+                input.style.color = '#48bb78';
+                input.style.fontWeight = 'bold';
+                
+                // Play celebration sound and "Excellent!" with British accent
+                if ('speechSynthesis' in window) {
+                    // Create celebration sound effect
+                    playCelebrationSound();
+                    
+                    // Say "Excellent!" after a short delay
+                    setTimeout(() => {
+                        const praiseUtterance = new SpeechSynthesisUtterance('Excellent!');
+                        praiseUtterance.lang = currentVoice === 'british' ? 'en-GB' : 'en-US';
+                        praiseUtterance.rate = 0.8;
+                        praiseUtterance.pitch = 1.1;
+                        speechSynthesis.speak(praiseUtterance);
+                    }, 800); // Wait for celebration sound to play
+                }
+            } else {
+                result.innerHTML = `❌ Incorrect. The correct answer is: <strong>${flashcards[index].english}</strong>`;
+                result.className = 'quiz-result incorrect';
+                input.style.borderColor = '#f56565';
+                input.style.color = '#f56565';
+                input.style.fontWeight = 'bold';
+                
+                // Play error sound - loud beep
+                if ('speechSynthesis' in window) {
+                    playErrorSound();
+                }
+            }
+        }
+
+        function playCelebrationSound() {
+            // Create celebratory sound effect with multiple tones
+            if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
+                const audioContext = new (AudioContext || webkitAudioContext)();
+                
+                // Victory melody - ascending notes
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                
+                notes.forEach((frequency, index) => {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                        oscillator.type = 'sine';
+                        
+                        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                        gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + 0.02);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.3);
+                    }, index * 120);
+                });
+                
+                // Add some sparkle effect - higher pitched quick notes
+                setTimeout(() => {
+                    for (let i = 0; i < 6; i++) {
+                        setTimeout(() => {
+                            const sparkleOsc = audioContext.createOscillator();
+                            const sparkleGain = audioContext.createGain();
+                            
+                            sparkleOsc.connect(sparkleGain);
+                            sparkleGain.connect(audioContext.destination);
+                            
+                            sparkleOsc.frequency.setValueAtTime(1200 + (Math.random() * 800), audioContext.currentTime);
+                            sparkleOsc.type = 'sine';
+                            
+                            sparkleGain.gain.setValueAtTime(0, audioContext.currentTime);
+                            sparkleGain.gain.linearRampToValueAtTime(0.2, audioContext.currentTime + 0.01);
+                            sparkleGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                            
+                            sparkleOsc.start(audioContext.currentTime);
+                            sparkleOsc.stop(audioContext.currentTime + 0.1);
+                        }, i * 50);
+                    }
+                }, 480);
+            }
+        }
+
+        function playErrorSound() {
+            // Create loud error beep
+            if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
+                const audioContext = new (AudioContext || webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+                oscillator.type = 'sawtooth';
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.05);
+                gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.3);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            }
+        }
+
+        function showAnswer(index) {
+            const input = document.querySelector(`input[data-index="${index}"]`);
+            const result = document.getElementById(`result-${index}`);
+            const showBtn = document.querySelector(`[onclick="showAnswer(${index})"]`);
+            
+            if (showBtn.textContent.includes('Show Answer')) {
+                // Show the answer
+                input.value = flashcards[index].english;
+                result.innerHTML = `💡 Answer: <strong>${flashcards[index].english}</strong> - ${flashcards[index].translation}`;
+                result.className = 'quiz-result';
+                result.style.background = '#e6fffa';
+                result.style.color = '#234e52';
+                input.style.borderColor = '#4dd0e1';
+                input.style.color = '#4dd0e1';
+                input.style.fontWeight = 'bold';
+                
+                // Change button text to "Clear"
+                showBtn.innerHTML = '🗑️ Clear';
+                showBtn.style.background = 'linear-gradient(45deg, #718096, #a0aec0)';
+            } else {
+                // Clear the answer
+                input.value = '';
+                result.innerHTML = '';
+                result.className = 'quiz-result';
+                result.style.background = '';
+                result.style.color = '';
+                input.style.borderColor = '#e2e8f0';
+                input.style.color = '#333';
+                input.style.fontWeight = 'normal';
+                
+                // Change button text back to "Show Answer"
+                showBtn.innerHTML = '❌ Show Answer';
+                showBtn.style.background = 'linear-gradient(45deg, #f56565, #fc8181)';
+            }
+        }
+
+        function playAudio(event, word) {
+            event.stopPropagation();
+            
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = currentVoice === 'british' ? 'en-GB' : 'en-US';
+                utterance.rate = 0.8;
+                utterance.pitch = 1;
+                speechSynthesis.speak(utterance);
+            } else {
+                alert('Browser does not support speech synthesis');
+            }
+        }
+
+        function filterCards(category) {
+            document.querySelectorAll('.controls .btn:not(.quiz-btn)').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            currentFilter = category;
+            
+            document.querySelectorAll('.card').forEach(card => {
+                if (category === 'all') {
+                    card.classList.remove('hidden');
+                } else {
+                    if (card.getAttribute('data-category') === category) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                }
+            });
+            
+            updateStats();
+        }
+
+        function flipAllCards() {
+            if (isQuizMode) return;
+            document.querySelectorAll('.card:not(.hidden)').forEach(card => {
+                card.classList.toggle('flipped');
+            });
+        }
+
+        function togglePlayAll() {
+            if (isPlayingAll) {
+                stopPlayAll();
+            } else {
+                playAllCards();
+            }
+        }
+
+        function stopPlayAll() {
+            isPlayingAll = false;
+            speechSynthesis.cancel(); // Stop current speech
+            
+            const playBtn = document.getElementById('playAllBtn');
+            playBtn.innerHTML = '🎵 Play All Words';
+            playBtn.className = 'play-all-btn';
+            
+            // Reset card scales
+            document.querySelectorAll('.card').forEach(c => c.style.transform = '');
+        }
+
+        function playAllCards() {
+            if (isPlayingAll) return;
+            
+            isPlayingAll = true;
+            const playBtn = document.getElementById('playAllBtn');
+            playBtn.innerHTML = '⏸️ Stop Playing';
+            playBtn.className = 'play-all-btn stop-btn';
+            
+            const visibleCards = flashcards.filter((card, index) => {
+                const cardElement = document.getElementById(`card-${index}`);
+                return !cardElement.classList.contains('hidden');
+            });
+            
+            let currentIndex = 0;
+            
+            function playNext() {
+                if (currentIndex >= visibleCards.length || !isPlayingAll) {
+                    stopPlayAll();
+                    return;
+                }
+                
+                const card = visibleCards[currentIndex];
+                const utterance = new SpeechSynthesisUtterance(card.english);
+                utterance.lang = currentVoice === 'british' ? 'en-GB' : 'en-US';
+                utterance.rate = 0.7;
+                utterance.pitch = 1;
+                
+                utterance.onend = function() {
+                    if (isPlayingAll) {
+                        currentIndex++;
+                        setTimeout(playNext, 1500); // Wait 1.5 seconds between words
+                    }
+                };
+                
+                utterance.onerror = function() {
+                    if (isPlayingAll) {
+                        currentIndex++;
+                        setTimeout(playNext, 1000);
+                    }
+                };
+                
+                speechSynthesis.speak(utterance);
+                
+                // Highlight current card
+                document.querySelectorAll('.card').forEach(c => c.style.transform = '');
+                const cardElement = document.getElementById(`card-${flashcards.indexOf(card)}`);
+                if (cardElement && !cardElement.classList.contains('hidden')) {
+                    cardElement.style.transform = 'scale(1.05)';
+                    cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+            
+            if ('speechSynthesis' in window) {
+                playNext();
+            } else {
+                alert('Browser does not support speech synthesis');
+                stopPlayAll();
+            }
+        }
+
+        function updateStats() {
+            const total = flashcards.length;
+            let visibleCount = 0;
+            
+            if (currentFilter === 'all') {
+                visibleCount = total;
+            } else {
+                visibleCount = flashcards.filter(card => card.category === currentFilter).length;
+            }
+            
+            const stats = {
+                health: flashcards.filter(card => card.category === 'health').length,
+                qualities: flashcards.filter(card => card.category === 'qualities').length,
+                sports: flashcards.filter(card => card.category === 'sports').length,
+                leadership: flashcards.filter(card => card.category === 'leadership').length
+            };
+            
+            document.getElementById('stats').textContent = 
+                `Total: ${total} | Health: ${stats.health} | Qualities: ${stats.qualities} | Sports: ${stats.sports} | Leadership: ${stats.leadership} | Showing: ${visibleCount}`;
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (isQuizMode) return;
+            
+            switch(event.code) {
+                case 'KeyF':
+                    flipAllCards();
+                    break;
+                case 'KeyP':
+                    togglePlayAll();
+                    break;
+                case 'KeyQ':
+                    toggleQuizMode();
+                    break;
+                case 'Space':
+                    event.preventDefault();
+                    togglePlayAll();
+                    break;
+            }
+        });
+
+        // Allow Enter key to check answers in quiz mode
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && isQuizMode) {
+                const activeInput = document.activeElement;
+                if (activeInput.classList.contains('quiz-input')) {
+                    const index = parseInt(activeInput.dataset.index);
+                    checkAnswer(index);
+                }
+            }
+        });
+
+        // Scroll to top functionality
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Show/hide scroll to top button based on scroll position
+        window.addEventListener('scroll', function() {
+            const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.classList.add('visible');
+            } else {
+                scrollToTopBtn.classList.remove('visible');
+            }
+        });
+
+        // Initialize
+        createCards();
+        updateStats();
+    </script>
+</body>
+</html>
