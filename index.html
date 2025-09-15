@@ -291,19 +291,19 @@
         }
 
         /* Category specific styles */
-        .card.health .card-face {
+        .card.health_activities .card-face {
             border-left: 5px solid #48bb78;
         }
 
-        .card.qualities .card-face {
+        .card.people_qualities .card-face {
             border-left: 5px solid #ed8936;
         }
 
-        .card.sports .card-face {
+        .card.organizations_competitions .card-face {
             border-left: 5px solid #4299e1;
         }
 
-        .card.leadership .card-face {
+        .card.places_things .card-face {
             border-left: 5px solid #9f7aea;
         }
 
@@ -460,7 +460,7 @@
     
     <div class="header">
         <img src="https://i.ibb.co/dw1Gs4dK/Chat-GPT-Image-Sep-16-2025-01-24-39-AM.png" alt="AI Illustration" style="width: 100px; height: 100px; margin-bottom: 15px; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
-        <h1>🎓 English Audio Flashcards - Grade 9 Intermediate</h1>
+        <h1>🎓 English Flashcards - 3rd Int. Grade</h1>
         <p>Interactive flashcards to learn English with audio pronunciation</p>
         <p style="font-size: 1rem; margin-top: 10px; color: rgba(255,255,255,0.9);">Teacher: Aza Almajdy</p>
     </div>
@@ -471,10 +471,10 @@
 
     <div class="controls">
         <button class="btn active" onclick="filterCards('all')">All Words</button>
-        <button class="btn" onclick="filterCards('health')">Health & Lifestyle</button>
-        <button class="btn" onclick="filterCards('qualities')">Personal Qualities</button>
-        <button class="btn" onclick="filterCards('sports')">Sports & Competition</button>
-        <button class="btn" onclick="filterCards('leadership')">Leadership & Government</button>
+        <button class="btn" onclick="filterCards('health_activities')">Health & Activities</button>
+        <button class="btn" onclick="filterCards('people_qualities')">People & Qualities</button>
+        <button class="btn" onclick="filterCards('organizations_competitions')">Organizations & Competitions</button>
+        <button class="btn" onclick="filterCards('places_things')">Places & Things</button>
         <button class="btn quiz-btn" onclick="toggleQuizMode()">📝 Quiz Mode</button>
         <button class="btn" onclick="flipAllCards()">🔄 Flip All</button>
     </div>
@@ -499,55 +499,39 @@
 
     <script>
         const flashcards = [
-            // Health & Lifestyle
-            { english: "fitness", translation: "لياقة بدنية", type: "noun", category: "health", emoji: "💪", lesson: "Health" },
-            { english: "fanatic", translation: "متعصب / مهووس", type: "noun", category: "health", emoji: "🔥", lesson: "Health" },
-            { english: "herbal tea", translation: "شاي عشبي", type: "noun", category: "health", emoji: "🫖", lesson: "Health" },
-            { english: "physical exercise", translation: "تمرين بدني", type: "noun", category: "health", emoji: "🏃‍♀️", lesson: "Health" },
-            { english: "solving puzzle", translation: "حل الألغاز", type: "verb", category: "health", emoji: "🧩", lesson: "Health" },
-            { english: "addict", translation: "مدمن", type: "noun", category: "health", emoji: "⚠️", lesson: "Health" },
-            { english: "nutrition", translation: "تغذية", type: "noun", category: "health", emoji: "🥗", lesson: "Health" },
-            { english: "meditation", translation: "تأمل", type: "noun", category: "health", emoji: "🧘", lesson: "Health" },
-            { english: "balanced diet", translation: "نظام غذائي متوازن", type: "noun", category: "health", emoji: "🍎", lesson: "Health" },
-            { english: "well-being", translation: "رفاهية", type: "noun", category: "health", emoji: "😊", lesson: "Health" },
-            
-            // Personal Qualities & Actions
-            { english: "devoted", translation: "مخلص / مكرس", type: "adjective", category: "qualities", emoji: "❤️", lesson: "Qualities" },
-            { english: "donate", translation: "يتبرع", type: "verb", category: "qualities", emoji: "🤝", lesson: "Qualities" },
-            { english: "Blood Donor Clinic", translation: "عيادة المتبرعين بالدم", type: "noun", category: "qualities", emoji: "🩸", lesson: "Qualities" },
-            { english: "ambitious", translation: "طموح", type: "adjective", category: "qualities", emoji: "🚀", lesson: "Qualities" },
-            { english: "compassionate", translation: "عطوف", type: "adjective", category: "qualities", emoji: "💖", lesson: "Qualities" },
-            { english: "resilient", translation: "مرن / صامد", type: "adjective", category: "qualities", emoji: "🌱", lesson: "Qualities" },
-            { english: "volunteer", translation: "يتطوع", type: "verb", category: "qualities", emoji: "🙌", lesson: "Qualities" },
-            
-            // Sports & Competition
-            { english: "Athlete", translation: "رياضي", type: "noun", category: "sports", emoji: "🏆", lesson: "Sports" },
-            { english: "award", translation: "جائزة", type: "noun", category: "sports", emoji: "🥇", lesson: "Sports" },
-            { english: "crippling", translation: "مُعيق / شديد", type: "adjective", category: "sports", emoji: "⚡", lesson: "Sports" },
-            { english: "twin", translation: "توأم", type: "noun", category: "sports", emoji: "👯", lesson: "Sports" },
-            { english: "falcons", translation: "صقور", type: "noun", category: "sports", emoji: "🦅", lesson: "Sports" },
-            { english: "Junior League", translation: "الدوري الصغار", type: "noun", category: "sports", emoji: "⚽", lesson: "Sports" },
-            { english: "coach", translation: "مدرب", type: "noun", category: "sports", emoji: "👨‍🏫", lesson: "Sports" },
-            { english: "bulletin board", translation: "لوحة الإعلانات", type: "noun", category: "sports", emoji: "📋", lesson: "Sports" },
-            { english: "forward", translation: "مهاجم", type: "noun", category: "sports", emoji: "⚡", lesson: "Sports" },
-            { english: "Division", translation: "قسم / فرقة", type: "noun", category: "sports", emoji: "📊", lesson: "Sports" },
-            { english: "championship", translation: "بطولة", type: "noun", category: "sports", emoji: "🏅", lesson: "Sports" },
-            { english: "opponent", translation: "خصم", type: "noun", category: "sports", emoji: "🆚", lesson: "Sports" },
-            { english: "stadium", translation: "ملعب", type: "noun", category: "sports", emoji: "🏟️", lesson: "Sports" },
-            { english: "victory", translation: "نصر", type: "noun", category: "sports", emoji: "🎉", lesson: "Sports" },
-            
-            // Leadership & Government
-            { english: "the Two Holy Mosques", translation: "الحرمين الشريفين", type: "noun", category: "leadership", emoji: "🕌", lesson: "Leadership" },
-            { english: "Crown Prince", translation: "ولي العهد", type: "noun", category: "leadership", emoji: "👑", lesson: "Leadership" },
-            { english: "predecessor", translation: "السلف / السابق", type: "noun", category: "leadership", emoji: "📜", lesson: "Leadership" },
-            { english: "Governor", translation: "محافظ / أمير", type: "noun", category: "leadership", emoji: "🏛️", lesson: "Leadership" },
-            { english: "Red Crescent", translation: "الهلال الأحمر", type: "noun", category: "leadership", emoji: "🌙", lesson: "Leadership" },
-            { english: "metropolis", translation: "مدينة كبرى", type: "noun", category: "leadership", emoji: "🏙️", lesson: "Leadership" },
-            { english: "humanitarian", translation: "إنساني", type: "adjective", category: "leadership", emoji: "🤲", lesson: "Leadership" },
-            { english: "ministry", translation: "وزارة", type: "noun", category: "leadership", emoji: "🏢", lesson: "Leadership" },
-            { english: "ambassador", translation: "سفير", type: "noun", category: "leadership", emoji: "🕊️", lesson: "Leadership" },
-            { english: "legislation", translation: "تشريع", type: "noun", category: "leadership", emoji: "⚖️", lesson: "Leadership" },
-            { english: "policy", translation: "سياسة", type: "noun", category: "leadership", emoji: "📄", lesson: "Leadership" }
+            // Health & Activities
+            { english: "fitness", translation: "لياقة بدنية", type: "noun", category: "health_activities", emoji: "💪", lesson: "Health" },
+            { english: "fanatic", translation: "متعصب / مهووس", type: "noun", category: "health_activities", emoji: "🔥", lesson: "Health" },
+            { english: "herbal tea", translation: "شاي عشبي", type: "noun", category: "health_activities", emoji: "🫖", lesson: "Health" },
+            { english: "physical exercise", translation: "تمرين بدني", type: "noun", category: "health_activities", emoji: "🏃‍♀️", lesson: "Health" },
+            { english: "solving puzzle", translation: "حل الألغاز", type: "verb", category: "health_activities", emoji: "🧩", lesson: "Health" },
+            { english: "addict", translation: "مدمن", type: "noun", category: "health_activities", emoji: "⚠️", lesson: "Health" },
+
+            // People & Qualities
+            { english: "devoted", translation: "مخلص / مكرس", type: "adjective", category: "people_qualities", emoji: "❤️", lesson: "Qualities" },
+            { english: "donate", translation: "يتبرع", type: "verb", category: "people_qualities", emoji: "🤝", lesson: "Qualities" },
+            { english: "Athlete", translation: "رياضي", type: "noun", category: "people_qualities", emoji: "🏆", lesson: "People" },
+            { english: "twin", translation: "توأم", type: "noun", category: "people_qualities", emoji: "👯", lesson: "People" },
+            { english: "coach", translation: "مدرب", type: "noun", category: "people_qualities", emoji: "👨‍🏫", lesson: "People" },
+            { english: "forward", translation: "مهاجم", type: "noun", category: "people_qualities", emoji: "⚡", lesson: "People" },
+            { english: "Crown Prince", translation: "ولي العهد", type: "noun", category: "people_qualities", emoji: "👑", lesson: "People" },
+            { english: "predecessor", translation: "السلف / السابق", type: "noun", category: "people_qualities", emoji: "📜", lesson: "People" },
+            { english: "Governor", translation: "محافظ / أمير", type: "noun", category: "people_qualities", emoji: "🏛️", lesson: "People" },
+            { english: "humanitarian", translation: "إنساني", type: "adjective", category: "people_qualities", emoji: "🤲", lesson: "Qualities" },
+
+            // Organizations & Competitions
+            { english: "Blood Donor Clinic", translation: "عيادة المتبرعين بالدم", type: "noun", category: "organizations_competitions", emoji: "🩸", lesson: "Organizations" },
+            { english: "award", translation: "جائزة", type: "noun", category: "organizations_competitions", emoji: "🥇", lesson: "Competitions" },
+            { english: "crippling", translation: "مُعيق / شديد", type: "adjective", category: "organizations_competitions", emoji: "⚡", lesson: "Competitions" },
+            { english: "Junior League", translation: "دوري الناشئين", type: "noun", category: "organizations_competitions", emoji: "⚽", lesson: "Competitions" },
+            { english: "Division", translation: "قسم / فرقة", type: "noun", category: "organizations_competitions", emoji: "📊", lesson: "Competitions" },
+            { english: "Red Crescent", translation: "الهلال الأحمر", type: "noun", category: "organizations_competitions", emoji: "🌙", lesson: "Organizations" },
+
+            // Places & Things
+            { english: "falcons", translation: "صقور", type: "noun", category: "places_things", emoji: "🦅", lesson: "Things" },
+            { english: "bulletin board", translation: "لوحة الإعلانات", type: "noun", category: "places_things", emoji: "📋", lesson: "Things" },
+            { english: "the Two Holy Mosques", translation: "الحرمين الشريفين", type: "noun", category: "places_things", emoji: "🕌", lesson: "Places" },
+            { english: "metropolis", translation: "مدينة كبرى", type: "noun", category: "places_things", emoji: "🏙️", lesson: "Places" }
         ];
 
         let currentFilter = 'all';
@@ -964,23 +948,18 @@
 
         function updateStats() {
             const total = flashcards.length;
-            let visibleCount = 0;
-            
-            if (currentFilter === 'all') {
-                visibleCount = total;
-            } else {
-                visibleCount = flashcards.filter(card => card.category === currentFilter).length;
-            }
             
             const stats = {
-                health: flashcards.filter(card => card.category === 'health').length,
-                qualities: flashcards.filter(card => card.category === 'qualities').length,
-                sports: flashcards.filter(card => card.category === 'sports').length,
-                leadership: flashcards.filter(card => card.category === 'leadership').length
+                health_activities: flashcards.filter(card => card.category === 'health_activities').length,
+                people_qualities: flashcards.filter(card => card.category === 'people_qualities').length,
+                organizations_competitions: flashcards.filter(card => card.category === 'organizations_competitions').length,
+                places_things: flashcards.filter(card => card.category === 'places_things').length
             };
+
+            const visibleCount = (currentFilter === 'all') ? total : stats[currentFilter] || 0;
             
             document.getElementById('stats').textContent = 
-                `Total: ${total} | Health: ${stats.health} | Qualities: ${stats.qualities} | Sports: ${stats.sports} | Leadership: ${stats.leadership} | Showing: ${visibleCount}`;
+                `Total: ${total} | Health: ${stats.health_activities} | People: ${stats.people_qualities} | Orgs: ${stats.organizations_competitions} | Places: ${stats.places_things} | Showing: ${visibleCount}`;
         }
 
         // Keyboard shortcuts
@@ -1039,6 +1018,4 @@
     </script>
 </body>
 </html>
-
-
 
