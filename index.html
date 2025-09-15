@@ -21,6 +21,27 @@
             align-items: center;
         }
 
+        .notification-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(45deg, #f56565, #ff8e53);
+            color: white;
+            text-align: center;
+            padding: 12px;
+            z-index: 1001;
+            transform: translateY(-100%);
+            transition: transform 0.4s ease-in-out;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .notification-bar.visible {
+            transform: translateY(0);
+        }
+
         .header {
             text-align: center;
             color: white;
@@ -424,22 +445,28 @@
     </style>
 </head>
 <body>
-    <div style="text-align: center; color: rgba(255,255,255,0.8); font-size: 0.8rem; margin-bottom: 10px; line-height: 1.3;">
-        وزارة التعليم (٢٨٠)<br>
-        الإدارة العامة للتعليم بمنطقة مكة المكرمة<br>
-        الشؤون التعليمية<br>
-        إدارة أداء التعليم / قسم الإدارة<br>
-        ابتدائية ومتوسطة التحفيظ ومتوسطة
+    <div id="notification-bar" class="notification-bar"></div>
+
+    <div style="display: flex; align-items: center; justify-content: center; gap: 20px; color: rgba(255,255,255,0.8); font-size: 0.8rem; margin-bottom: 10px; line-height: 1.3;">
+        <img src="https://i.ibb.co/tMdqkb7z/image.png" alt="شعار وزارة التعليم" style="height: 80px; border-radius: 8px;">
+        <div style="text-align: center;">
+            وزارة التعليم (٢٨٠)<br>
+            الإدارة العامة للتعليم بمنطقة مكة المكرمة<br>
+            الشؤون التعليمية<br>
+            إدارة أداء التعليم / قسم الإدارة<br>
+            ابتدائية ومتوسطة التحفيظ ومتوسطة
+        </div>
     </div>
     
     <div class="header">
-        <h1>🎓 English Audio Flashcards - Grade 3 Intermediate</h1>
+        <img src="https://i.ibb.co/dw1Gs4dK/Chat-GPT-Image-Sep-16-2025-01-24-39-AM.png" alt="AI Illustration" style="width: 100px; height: 100px; margin-bottom: 15px; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+        <h1>🎓 English Audio Flashcards - Grade 9 Intermediate</h1>
         <p>Interactive flashcards to learn English with audio pronunciation</p>
         <p style="font-size: 1rem; margin-top: 10px; color: rgba(255,255,255,0.9);">Teacher: Aza Almajdy</p>
     </div>
 
     <div class="stats" id="stats">
-        Total Words: 27 | Currently Showing: 27
+        <!-- Stats will be populated by JavaScript -->
     </div>
 
     <div class="controls">
@@ -479,11 +506,19 @@
             { english: "physical exercise", translation: "تمرين بدني", type: "noun", category: "health", emoji: "🏃‍♀️", lesson: "Health" },
             { english: "solving puzzle", translation: "حل الألغاز", type: "verb", category: "health", emoji: "🧩", lesson: "Health" },
             { english: "addict", translation: "مدمن", type: "noun", category: "health", emoji: "⚠️", lesson: "Health" },
+            { english: "nutrition", translation: "تغذية", type: "noun", category: "health", emoji: "🥗", lesson: "Health" },
+            { english: "meditation", translation: "تأمل", type: "noun", category: "health", emoji: "🧘", lesson: "Health" },
+            { english: "balanced diet", translation: "نظام غذائي متوازن", type: "noun", category: "health", emoji: "🍎", lesson: "Health" },
+            { english: "well-being", translation: "رفاهية", type: "noun", category: "health", emoji: "😊", lesson: "Health" },
             
             // Personal Qualities & Actions
             { english: "devoted", translation: "مخلص / مكرس", type: "adjective", category: "qualities", emoji: "❤️", lesson: "Qualities" },
             { english: "donate", translation: "يتبرع", type: "verb", category: "qualities", emoji: "🤝", lesson: "Qualities" },
             { english: "Blood Donor Clinic", translation: "عيادة المتبرعين بالدم", type: "noun", category: "qualities", emoji: "🩸", lesson: "Qualities" },
+            { english: "ambitious", translation: "طموح", type: "adjective", category: "qualities", emoji: "🚀", lesson: "Qualities" },
+            { english: "compassionate", translation: "عطوف", type: "adjective", category: "qualities", emoji: "💖", lesson: "Qualities" },
+            { english: "resilient", translation: "مرن / صامد", type: "adjective", category: "qualities", emoji: "🌱", lesson: "Qualities" },
+            { english: "volunteer", translation: "يتطوع", type: "verb", category: "qualities", emoji: "🙌", lesson: "Qualities" },
             
             // Sports & Competition
             { english: "Athlete", translation: "رياضي", type: "noun", category: "sports", emoji: "🏆", lesson: "Sports" },
@@ -496,6 +531,10 @@
             { english: "bulletin board", translation: "لوحة الإعلانات", type: "noun", category: "sports", emoji: "📋", lesson: "Sports" },
             { english: "forward", translation: "مهاجم", type: "noun", category: "sports", emoji: "⚡", lesson: "Sports" },
             { english: "Division", translation: "قسم / فرقة", type: "noun", category: "sports", emoji: "📊", lesson: "Sports" },
+            { english: "championship", translation: "بطولة", type: "noun", category: "sports", emoji: "🏅", lesson: "Sports" },
+            { english: "opponent", translation: "خصم", type: "noun", category: "sports", emoji: "🆚", lesson: "Sports" },
+            { english: "stadium", translation: "ملعب", type: "noun", category: "sports", emoji: "🏟️", lesson: "Sports" },
+            { english: "victory", translation: "نصر", type: "noun", category: "sports", emoji: "🎉", lesson: "Sports" },
             
             // Leadership & Government
             { english: "the Two Holy Mosques", translation: "الحرمين الشريفين", type: "noun", category: "leadership", emoji: "🕌", lesson: "Leadership" },
@@ -504,7 +543,11 @@
             { english: "Governor", translation: "محافظ / أمير", type: "noun", category: "leadership", emoji: "🏛️", lesson: "Leadership" },
             { english: "Red Crescent", translation: "الهلال الأحمر", type: "noun", category: "leadership", emoji: "🌙", lesson: "Leadership" },
             { english: "metropolis", translation: "مدينة كبرى", type: "noun", category: "leadership", emoji: "🏙️", lesson: "Leadership" },
-            { english: "humanitarian", translation: "إنساني", type: "adjective", category: "leadership", emoji: "🤲", lesson: "Leadership" }
+            { english: "humanitarian", translation: "إنساني", type: "adjective", category: "leadership", emoji: "🤲", lesson: "Leadership" },
+            { english: "ministry", translation: "وزارة", type: "noun", category: "leadership", emoji: "🏢", lesson: "Leadership" },
+            { english: "ambassador", translation: "سفير", type: "noun", category: "leadership", emoji: "🕊️", lesson: "Leadership" },
+            { english: "legislation", translation: "تشريع", type: "noun", category: "leadership", emoji: "⚖️", lesson: "Leadership" },
+            { english: "policy", translation: "سياسة", type: "noun", category: "leadership", emoji: "📄", lesson: "Leadership" }
         ];
 
         let currentFilter = 'all';
@@ -676,7 +719,7 @@
         function playCelebrationSound() {
             // Create celebratory sound effect with multiple tones
             if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
-                const audioContext = new (AudioContext || webkitAudioContext)();
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 
                 // Victory melody - ascending notes
                 const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
@@ -729,7 +772,7 @@
         function playErrorSound() {
             // Create loud error beep
             if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
-                const audioContext = new (AudioContext || webkitAudioContext)();
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
                 
@@ -784,6 +827,18 @@
             }
         }
 
+        function showNotification(message) {
+            const notificationBar = document.getElementById('notification-bar');
+            if (!notificationBar) return;
+            notificationBar.textContent = message;
+            notificationBar.classList.add('visible');
+
+            // Hide after a few seconds
+            setTimeout(() => {
+                notificationBar.classList.remove('visible');
+            }, 4000);
+        }
+
         function playAudio(event, word) {
             event.stopPropagation();
             
@@ -794,7 +849,7 @@
                 utterance.pitch = 1;
                 speechSynthesis.speak(utterance);
             } else {
-                alert('Browser does not support speech synthesis');
+                showNotification('Sorry, your browser does not support speech synthesis.');
             }
         }
 
@@ -856,7 +911,7 @@
             
             const visibleCards = flashcards.filter((card, index) => {
                 const cardElement = document.getElementById(`card-${index}`);
-                return !cardElement.classList.contains('hidden');
+                return cardElement && !cardElement.classList.contains('hidden');
             });
             
             let currentIndex = 0;
@@ -891,7 +946,8 @@
                 
                 // Highlight current card
                 document.querySelectorAll('.card').forEach(c => c.style.transform = '');
-                const cardElement = document.getElementById(`card-${flashcards.indexOf(card)}`);
+                const originalIndex = flashcards.indexOf(card);
+                const cardElement = document.getElementById(`card-${originalIndex}`);
                 if (cardElement && !cardElement.classList.contains('hidden')) {
                     cardElement.style.transform = 'scale(1.05)';
                     cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -901,7 +957,7 @@
             if ('speechSynthesis' in window) {
                 playNext();
             } else {
-                alert('Browser does not support speech synthesis');
+                showNotification('Sorry, your browser does not support speech synthesis.');
                 stopPlayAll();
             }
         }
@@ -983,3 +1039,6 @@
     </script>
 </body>
 </html>
+
+
+
